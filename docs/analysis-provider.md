@@ -46,23 +46,25 @@ Tối thiểu 5 case.
 
 Ghi rõ những điểm user story chưa nói nhưng Provider cần giả định.
 
-- Giả định 1:
-- Giả định 2:
-- Giả định 3:
+- Giả định 1: Consumer gửi ảnh dưới dạng URL, không phải multipart.
+- Giả định 2: Kích thước frame tối đa là 5MB.
+- Giả định 3: Consumer chịu trách nhiệm retry khi timeout, không yêu cầu idempotency từ Provider.
 
 ---
 
 ## 5. Câu hỏi cho Consumer
 
-1. 
-2. 
-3. 
+1. Ảnh gửi dạng multipart hay URL?
+2. Giới hạn kích thước frame là bao nhiêu?
+3. AI Vision trả kết quả đồng bộ hay trả detectionId để polling?
 
 ---
-
 ## 6. Rủi ro tích hợp
 
-| Rủi ro | Tác động | Đề xuất xử lý |
-|---|---|---|
-| Tên field không thống nhất | Consumer parse lỗi | Chốt naming trong `openapi.yaml` |
-| Payload lớn | Timeout/mock lỗi | Thống nhất content-type và size limit |
+| Rủi ro                          | Tác động                | Đề xuất xử lý                          |
+|---------------------------------|-------------------------|----------------------------------------|
+| Tên field không thống nhất      | Consumer parse lỗi      | Chốt naming trong `openapi.yaml`       |
+| Payload lớn                     | Timeout/mock lỗi        | Thống nhất content-type và size limit  |
+| Consumer gửi sai định dạng ảnh  | Provider không xử lý    | Validate input và trả lỗi chi tiết     |
+| Timeout khi xử lý ảnh lớn        | Consumer không nhận kết quả | Đưa ra SLA và tối ưu thời gian xử lý   |
+| Retry không kiểm soát           | Xử lý lặp, trùng kết quả | Thêm idempotency key vào request       |
